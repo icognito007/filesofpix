@@ -10,6 +10,7 @@
 
 #include <readaline.h>
 #include <hashStore.h>
+#include <p2top5.h>
 
 static FILE *open_or_abort(char *fname, char *mode) {
   FILE *fp = fopen(fname, mode);
@@ -41,7 +42,6 @@ const char *uncorruptLine(int bytes, char **datapp, char **uncorruptedpp) {
   corruptionString[corruptionNum] = '\0';
   (*uncorruptedpp)[bytes] = '\0';
 
-  // also needs to be freed elsewhere
   const char *corruptionAtom = Atom_new(corruptionString, corruptionNum);
   free(corruptionString);
   return corruptionAtom;
@@ -49,15 +49,11 @@ const char *uncorruptLine(int bytes, char **datapp, char **uncorruptedpp) {
 
 int main(int argc, char* argv[])
 {
-  printf("Hello World\n");
-
   if (argc > 1) {
-    printf("%s\n", argv[1]);
     FILE *plainF  = open_or_abort(argv[1], "rb");
 
     char **datapp = malloc(sizeof(char*));
     size_t bytesRead = readaline(plainF, datapp);
-
     char **uncorruptedpp = malloc(sizeof(char*));
 
     Table_T *hashTablep = malloc(sizeof(Table_T*));
@@ -65,34 +61,20 @@ int main(int argc, char* argv[])
     List_T knownGoodList = NULL;
 
     while (*datapp != NULL) {
-      printf("bytes read: %d, data read: \"%s\"\n", (int) bytesRead, *datapp);
       const char *corruptionAtomp =
         uncorruptLine(bytesRead, datapp, uncorruptedpp);
       free(*datapp);
 
-      printf("uncorrupted string: \"%s\"\n", *uncorruptedpp);
-      printf("corruption string:  \"%s\"\n", Atom_string(corruptionAtomp));
-
       List_T currList = hashStore(corruptionAtomp, uncorruptedpp, *hashTablep);
-      if (currList == NULL) {
-        printf("null pointer\n\n");
-      } else {
-        printf("good list!\n\n");
+      if (currList != NULL) {
         knownGoodList = currList;
       }
 
       bytesRead = readaline(plainF, datapp);
     }
-
-    printf("known good list length: %d\n", List_length(knownGoodList));
+  
     knownGoodList = List_reverse(knownGoodList);
-    int knownGoodListLength = List_length(knownGoodList);
-    for (int i = 0; i < knownGoodListLength; i++) {
-      void **ptr = malloc(sizeof(void *));
-      knownGoodList = List_pop(knownGoodList, ptr);
-      char **charp = (char **) ptr;
-      printf("\"%s\"\n", *charp);
-    }
+    printasp5(knownGoodList);
 
     Table_free(hashTablep);
     free(hashTablep);

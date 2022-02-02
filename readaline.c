@@ -6,7 +6,7 @@
 
 size_t readaline (FILE *inputfd, char **datapp) {
   if (inputfd == NULL || datapp == NULL) {
-    // handle error
+    fprintf(stderr, "Invalid ");
   }
 
   if (feof(inputfd)) {
@@ -16,25 +16,26 @@ size_t readaline (FILE *inputfd, char **datapp) {
 
   *datapp = malloc(50 * sizeof(char));
   if (*datapp == NULL) {
-    // handle error
+    //handle error
+    fprintf(stderr, "Invalid input 1\n");
   }
-  char *initialp = *datapp;
 
   size_t bytesRead = 0;
-  char currentChar;
+  char currentChar; // make this an int for the EOF error
   while ((currentChar = getc(inputfd)) != '\n' && currentChar != EOF) {
-    *initialp = currentChar;
-    initialp++;
+    (*datapp)[(int) bytesRead] = currentChar;
     bytesRead++;
     if (bytesRead % 50 == 0) {
       *datapp = realloc(*datapp, (bytesRead + 50) * sizeof(char));
       if (*datapp == NULL) {
         // handle error
+        fprintf(stderr, "Invalid input 2\n");
       }
     }
   }
   if (currentChar != '\n' && !feof(inputfd)) {
     // handle error
+    fprintf(stderr, "Invalid input 3\n");
   }
 
   // free(initialp);

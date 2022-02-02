@@ -15,7 +15,6 @@ List_T hashStore(const char *corruptionAtomp, char **uncorruptedpp,
     Table_put (hashTable, corruptionAtomp, newVal);
     return NULL;
   } else {
-    printf("storing! current list length: %d\n", List_length(currVal));
     newVal = List_push(currVal, *uncorruptedpp);
     Table_put (hashTable, corruptionAtomp, newVal);
     return newVal;
