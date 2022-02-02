@@ -23,13 +23,14 @@ int main(int argc, char* argv[])
     Pnmrdr_mapdata mapData = Pnmrdr_data(reader);
     printf("The width %u, height %u and maxVal are %u\n", mapData.width, mapData.height, mapData.denominator);
     printf("The total number of pixels in the file are %u\n", mapData.width * mapData.height);
-    printf("Reading in all pixels in the file\n");
+    printf("Reading in all pixels in the file \n");
 
 
     for (int i = 0; i <= mapData.width * mapData.height; i++) {
         Pnmrdr_get(reader));
         }
-
+    //Pnmrdr_free will raise an exception if not all pixels read in.
+    Pnmrdr_free(&reader);
     printf("All pixels have been read sucessfully\n");
     fclose(plainF);
   }
