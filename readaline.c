@@ -6,7 +6,14 @@
 
 size_t readaline (FILE *inputfd, char **datapp) {
   if (inputfd == NULL || datapp == NULL) {
-    fprintf(stderr, "Invalid ");
+    if (inputfd == NULL){
+      fprintf(stderr, "readaline error: inputfd is a null pointer \n");
+      return 0;
+    }
+    else {
+      fprintf(stderr, "readaline error: datapp is a null pointer \n");
+      return 0;
+    }
   }
 
   if (feof(inputfd)) {
@@ -17,7 +24,8 @@ size_t readaline (FILE *inputfd, char **datapp) {
   *datapp = malloc(50 * sizeof(char));
   if (*datapp == NULL) {
     //handle error
-    fprintf(stderr, "Invalid input 1\n");
+    fprintf(stderr, "readline error: could not allocate memory for pointer datapp\n");
+    return 0;
   }
 
   size_t bytesRead = 0;
@@ -28,14 +36,14 @@ size_t readaline (FILE *inputfd, char **datapp) {
     if (bytesRead % 50 == 0) {
       *datapp = realloc(*datapp, (bytesRead + 50) * sizeof(char));
       if (*datapp == NULL) {
-        // handle error
-        fprintf(stderr, "Invalid input 2\n");
+        fprintf(stderr, "readline error: could not allocate the memory for pointer datapp\n");
+        return bytesRead;
       }
     }
   }
   if (currentChar != '\n' && !feof(inputfd)) {
-    // handle error
-    fprintf(stderr, "Invalid input 3\n");
+    fprintf(stderr, "readline error: could not read till the end of line\n");
+    return bytesRead;
   }
 
   // free(initialp);
