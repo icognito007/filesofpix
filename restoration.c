@@ -47,6 +47,25 @@ const char *uncorruptLine(int bytes, char **datapp, char **uncorruptedpp) {
   return corruptionAtom;
 }
 
+void freeListElement(void **element, void *cl) {
+  (void) cl;
+  // (void) element;
+  char **charElementpp = (char **) element;
+  free(*charElementpp);
+  // free(charElementpp);
+}
+
+void freeTableElements(const void *key, void **value, void *cl) {
+  (void) key;
+  List_T *valueListp = (List_T *) value;
+  List_T knownGoodList = (List_T) cl;
+
+  if ((*valueListp) != knownGoodList) {
+    List_map((*valueListp), freeListElement, NULL);
+    List_free(valueListp);
+  }
+}
+
 int main(int argc, char* argv[])
 {
   if (argc > 1) {
@@ -59,6 +78,7 @@ int main(int argc, char* argv[])
     Table_T *hashTablep = malloc(sizeof(Table_T*));
     *hashTablep = Table_new(10, NULL, NULL);
     List_T knownGoodList = NULL;
+    const char* knownGoodAtom;
 
     while (*datapp != NULL) {
       const char *corruptionAtomp =
@@ -76,10 +96,10 @@ int main(int argc, char* argv[])
     knownGoodList = List_reverse(knownGoodList);
     printasp5(knownGoodList);
 
+    Table_map(*hashTablep, freeTableElements, knownGoodList);
     Table_free(hashTablep);
     free(hashTablep);
     fclose(plainF);
-    free(*uncorruptedpp);
     free(uncorruptedpp);
     free(datapp);
   }

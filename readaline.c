@@ -21,7 +21,7 @@ size_t readaline (FILE *inputfd, char **datapp) {
   }
 
   size_t bytesRead = 0;
-  char currentChar; // make this an int for the EOF error
+  int currentChar; // make this an int for the EOF error
   while ((currentChar = getc(inputfd)) != '\n' && currentChar != EOF) {
     (*datapp)[(int) bytesRead] = currentChar;
     bytesRead++;

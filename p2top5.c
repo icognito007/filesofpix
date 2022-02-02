@@ -28,6 +28,7 @@ void printasp5(List_T kgl) {
 
     free(*currLine);
   }
+  free(ptr);
 }
 
 List_T p2top5(List_T kgl, int *width, int *height, int *maxVal) {
@@ -44,11 +45,9 @@ List_T p2top5(List_T kgl, int *width, int *height, int *maxVal) {
     convertedKgl = List_push(convertedKgl, *((int **) ptr));
   }
 
-  List_free(&kgl);
-  return List_reverse(convertedKgl);
-
-  free(*ptr);
+  // List_free(&kgl);
   free(ptr);
+  return List_reverse(convertedKgl);
 }
 
 // returns line max val
@@ -83,14 +82,11 @@ int convertLineToBin(void **ptr, int *width) {
 
         // write char
         convertedLine[outputIndex++] = currentToken;
-        fprintf(stderr, "%d ", currentToken);
         currentToken = 0;
       }
     }
     currentChar = currLine[++inputIndex];
   } while (currentChar != '\0');
-
-  fprintf(stderr, "while loop finished ");
 
   // messy, but we need to make sure we read in the last token
   if (readingToken) {
@@ -107,10 +103,7 @@ int convertLineToBin(void **ptr, int *width) {
 
     // write char
     convertedLine[outputIndex++] = currentToken;
-    fprintf(stderr, "%d\n\n", currentToken);
   }
-
-  fprintf(stderr, "done printing chars ");
 
   // check size
   if (outputIndex % 50 == 0) {
