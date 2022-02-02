@@ -84,6 +84,9 @@ restoration: restoration.o readaline.o hashStore.o p2top5.o
 
 main: main.o readaline.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+p5Check: p5Check.o 
+	$(CC) $(LDFLAGS) -o $@ $^ $(LDLIBS)
 #
 # Other Shortcuts worth nothing
 # $@ takes the name of the build rule and inserts it into the command
